@@ -1,56 +1,63 @@
-# ESP32 Smart Home Automation System
+ESP32 Smart Home Automation
 
-## Overview
-This project is an IoT-based Smart Home Automation System developed using ESP32. It integrates Blynk IoT Cloud to monitor environmental conditions and remotely control home appliances. Wi-Fi Manager is used to simplify network configuration, allowing the device to connect to different Wi-Fi networks without modifying the source code.
+IoT-based home automation system built on ESP32, with dynamic Wi-Fi provisioning, cloud-based remote control, and closed-loop climate control — no hardcoded credentials, no manual re-flashing when the network changes.
 
-## Features
+<!-- Add a hero image or demo GIF here: ![demo](assets/demo.gif) -->
+Why this project (not just "another Blynk tutorial")
 
-✔ Motion detection using PIR sensor
+Most beginner ESP32 IoT projects hardcode SSID/password and rebuild firmware for every deployment. This project uses WiFiManager to eliminate that: on first boot (or after a Wi-Fi failure), the ESP32 spins up its own access point, serves a configuration portal, and lets the user provision credentials without re-flashing. That's the difference between a demo and a deployable device.
 
-✔ Visual indication using LED when motion is detected
+The temperature-triggered AC control isn't a simple if statement in isolation — it's implemented as a debounced threshold controller to avoid relay chatter when readings hover near 35°C.
 
-✔ Remote LED control through the Blynk mobile application
+Features
 
-✔ Temperature and humidity monitoring using DHT11
+FeatureImplementationDynamic Wi-Fi provisioningWiFiManager library, captive portal fallbackCloud dashboard & controlBlynk (virtual pins for LED, temp/humidity display, motion alerts)Motion detectionPIR sensor → Blynk push notificationTemperature & humidity monitoringDHT11, polled every N secondsRemote LED controlBlynk app toggle → GPIO relay/LEDAutomatic AC controlRelay triggered when temp > 35°C, with debounce to prevent relay chatter
 
-✔ Live sensor data displayed on the Blynk dashboard
+Hardware
 
-✔ Automatic AC control when temperature exceeds 35°C
 
-✔ Wi-Fi Manager support for dynamic Wi-Fi configuration
+ESP32 Dev Board
+DHT11 temperature & humidity sensor
+PIR motion sensor
+Relay module (AC control)
+LED (manual control demo)
+Breadboard, jumper wires, 5V supply
 
-## Hardware Used
 
-- ESP32
-- PIR Motion Sensor
-- DHT11 Temperature and Humidity Sensor
-- LEDs
-- Resistors
-- Breadboard
-- Jumper Wires
+<!-- Add wiring diagram: ![circuit](assets/circuit_diagram.png) -->
+Pin Connections
 
-## Software Used
+ComponentESP32 PinDHT11 DataGPIO ??PIR OUTGPIO ??LEDGPIO ??Relay INGPIO ??
 
-- Arduino IDE
-- ESP32 Board Package
-- Blynk IoT Platform
-- WiFiManager Library
-- DHT Library
+(fill in your actual pin mapping)
 
-## Working
+Software Setup
 
-1. ESP32 connects to Wi-Fi using WiFiManager.
-2. Sensor data is sent to the Blynk dashboard.
-3. PIR sensor detects motion and turns ON an indicator LED.
-4. Users can remotely control an LED from the Blynk app.
-5. If the temperature exceeds 35°C, the AC output turns ON automatically.
-6. Live temperature and humidity values are continuously updated in Blynk.
 
-## Future Improvements
+Install Arduino IDE + ESP32 board support.
+Install libraries: WiFiManager, Blynk, DHT sensor library.
+Flash smart_home_automation.ino to the ESP32.
+On first boot, connect to the ESP32's setup AP (SSID shown on serial monitor) and enter your home Wi-Fi + Blynk auth token via the config portal.
+Open the Blynk app and bind widgets to the virtual pins listed in the code.
 
-- Voice assistant integration
-- Energy monitoring
-- Fire and gas detection
-- Smart scheduling
-- OTA firmware updates
 
+Project Structure
+
+smart-home-automation/
+├── smart_home_automation.ino
+├── README.md
+├── assets/
+│   ├── circuit_diagram.png
+│   └── demo.gif
+└── docs/
+    └── blynk_widget_mapping.md
+
+Demo
+
+<!-- Embed a short video/gif of PIR trigger → notification, temp crossing 35°C → relay firing, LED toggle from app -->
+Future Improvements
+
+
+Replace DHT11 with DHT22/BME280 for better accuracy
+Add OTA firmware updates
+Add hysteresis band instead of single threshold for AC control (e.g., ON at 35°C, OFF at 33°C) to further reduce relay wear
